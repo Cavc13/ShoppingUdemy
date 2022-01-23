@@ -1,5 +1,7 @@
 package com.udemy.shoppingudemy.domain
 
+import androidx.lifecycle.LiveData
+
 interface ShopListRepository {
     fun deleteShopItem(shopItem: ShopItem)
 
@@ -9,5 +11,5 @@ interface ShopListRepository {
 
     fun addShopItem(itemShop: ShopItem)
 
-    fun getShopList() : List<ShopItem>
+    fun getShopList() : LiveData<List<ShopItem>>
 }
