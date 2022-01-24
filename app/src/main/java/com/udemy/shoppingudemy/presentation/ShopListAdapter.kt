@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.udemy.shoppingudemy.R
 import com.udemy.shoppingudemy.domain.ShopItem
@@ -19,11 +19,16 @@ class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>(
         const val MAX_POOL_SIZE = 30
     }
 
+    var onShopItemLongClickListener: ((ShopItem)-> Unit)? = null
+    var onShopItemClickListener: ((ShopItem)-> Unit)? = null
+
     var shopList = listOf<ShopItem>()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
 
@@ -43,7 +48,11 @@ class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>(
         holder.tvName.text = shopItem.name
         holder.tvCount.text = shopItem.count.toString()
         holder.view.setOnLongClickListener {
+            onShopItemLongClickListener?.invoke(shopItem)
             true
+        }
+        holder.view.setOnClickListener {
+            onShopItemClickListener?.invoke(shopItem)
         }
     }
 
