@@ -1,38 +1,21 @@
 package com.udemy.shoppingudemy.presentation
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
 import com.udemy.shoppingudemy.R
 import com.udemy.shoppingudemy.domain.ShopItem
-import java.lang.RuntimeException
 
-class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>() {
+class ShopListAdapter: ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCallback()) {
 
     companion object {
         const val VIEW_ACTIVE = 111
         const val VIEW_NOT_ACTIVE = 222
-
         const val MAX_POOL_SIZE = 30
     }
 
     var onShopItemLongClickListener: ((ShopItem)-> Unit)? = null
     var onShopItemClickListener: ((ShopItem)-> Unit)? = null
-
-    var count = 0
-
-    var shopList = listOf<ShopItem>()
-        set(value) {
-            val callback = ShopListDiffCallback (shopList, value)
-            val diffResult = DiffUtil.calculateDiff(callback).dispatchUpdatesTo(this)
-            field = value
-        }
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
 
@@ -48,8 +31,7 @@ class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>(
     }
 
     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
-        Log.d("ShopListAdapter", "onBindViewHolder, count: ${++count}")
-        val shopItem = shopList[position]
+        val shopItem = getItem(position)
         holder.tvName.text = shopItem.name
         holder.tvCount.text = shopItem.count.toString()
         holder.view.setOnLongClickListener {
@@ -62,26 +44,10 @@ class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (shopList[position].enabled) {
+        return if (getItem(position).enabled) {
             VIEW_ACTIVE
         } else {
             VIEW_NOT_ACTIVE
         }
-    }
-
-    override fun getItemCount(): Int {
-        return shopList.size
-    }
-
-    override fun onViewRecycled(holder: ShopItemViewHolder) {
-        super.onViewRecycled(holder)
-        holder.tvName.text = ""
-        holder.tvCount.text = ""
-
-    }
-
-    class ShopItemViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-        val tvName = view.findViewById<TextView>(R.id.tv_name)
-        val tvCount = view.findViewById<TextView>(R.id.tv_count)
     }
 }
