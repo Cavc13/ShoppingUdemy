@@ -25,6 +25,7 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
         if (savedInstanceState == null) {
             launchRightMode()
         }
+
     }
 
     private fun launchRightMode() {
