@@ -1,23 +1,18 @@
 package com.udemy.shoppingudemy.data
 
-import android.app.Application
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.udemy.shoppingudemy.domain.ShopItem
 import com.udemy.shoppingudemy.domain.ShopListRepository
-import java.lang.RuntimeException
-import kotlin.random.Random
+import javax.inject.Inject
 
-class ShopListRepositoryImpl(
-    application: Application
+class ShopListRepositoryImpl @Inject constructor(
+    private val mapper: ShopListMapper,
+    private val shopListDao: ShopListDao
 ): ShopListRepository {
-    private val shopListDao = AppDatabase.getInstance(application).shopListDao()
-    private val mapper = ShopListMapper()
 
-    override suspend fun addShopItem(shopItem: ShopItem) {
-        shopListDao.addShopItem(mapper.mapEntityToDbModel(shopItem))
+    override suspend fun addShopItem(itemShop: ShopItem) {
+        shopListDao.addShopItem(mapper.mapEntityToDbModel(itemShop))
     }
 
     override suspend fun deleteShopItem(shopItem: ShopItem) {
@@ -33,13 +28,9 @@ class ShopListRepositoryImpl(
         return mapper.mapDbModelToEntity(dbModel)
     }
 
-
-
     override fun getShopList(): LiveData<List<ShopItem>> = Transformations.map(
         shopListDao.getShopList()
     ) {
         mapper.mapListDbModelToListEntity(it)
     }
-
-
 }
